@@ -6,10 +6,15 @@ import {
   Delete,
   Param,
   Body,
+  Injectable,
+  UseInterceptors,
 } from '@nestjs/common';
-import { Customer } from '../model/customer.model';
-import { Result } from '../model/result.model';
+import { Customer } from '../models/customer.model';
+import { Result } from '../models/result.model';
+import { ValidatorInterceptor } from 'src/interceptors/validator.interceptor';
+import { CreateCustomerContract } from '../contracts/customer.contracts';
 
+@Injectable()
 @Controller('/v1/customers')
 export class CustomerController {
   @Get()
@@ -23,6 +28,8 @@ export class CustomerController {
   }
 
   @Post()
+// tslint:disable-next-line: new-parens
+  @UseInterceptors(new ValidatorInterceptor(new CreateCustomerContract()))
   post(@Body() body: Customer) {
     return new Result('Cliente criado com sucesso', true, body, null);
   }
